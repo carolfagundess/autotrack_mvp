@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -29,5 +28,19 @@ public class VehicleService {
 
     public Vehicle getVehicleById(Long id){
         return vehicleRepository.findById(id).orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+    }
+
+    public Vehicle saveVehicle(Vehicle vehicle){
+        return vehicleRepository.save(vehicle);
+    }
+
+    public Vehicle UpdateVehicle(Long id, Vehicle vehicle){
+        Vehicle vehicleSaved = getVehicleById(id);
+        Vehicle vehicleNew = Vehicle.builder()
+                .id(vehicleSaved.getId())
+                .brand(vehicle.getBrand() != null ? vehicle.getBrand() : vehicleSaved.getBrand())
+                .year(vehicle.getYear() != null ? vehicle.getYear() : vehicleSaved.getYear())
+                .build();
+        return vehicleRepository.saveAndFlush(vehicleNew);
     }
 }
