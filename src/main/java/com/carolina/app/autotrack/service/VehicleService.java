@@ -34,7 +34,7 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
-    public Vehicle UpdateVehicle(Long id, Vehicle vehicle){
+    public Vehicle updateVehicle(Long id, Vehicle vehicle){
         Vehicle vehicleSaved = getVehicleById(id);
         Vehicle vehicleNew = Vehicle.builder()
                 .id(vehicleSaved.getId())
@@ -42,5 +42,11 @@ public class VehicleService {
                 .year(vehicle.getYear() != null ? vehicle.getYear() : vehicleSaved.getYear())
                 .build();
         return vehicleRepository.saveAndFlush(vehicleNew);
+    }
+
+    public void deleteVehicle(Long id){
+        if(vehicleRepository.existsById(id)){
+            vehicleRepository.deleteById(id);
+        }
     }
 }

@@ -34,6 +34,6 @@ public class Vehicle {
     @Column(length = 20, nullable = false)
     String model;
     @Positive(message = "O valor deve ser positivo")
-    @Min(value = 1900, message = "O ano mínimo é 1900")
+    @Min(value = 1950, message = "O ano mínimo é 1950")
     Integer year;
 }
