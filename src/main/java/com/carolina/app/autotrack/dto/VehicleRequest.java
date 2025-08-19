@@ -1,4 +1,4 @@
-package com.carolina.app.autotrack.model.dto;
+package com.carolina.app.autotrack.dto;
 
 import com.carolina.app.autotrack.model.Vehicle;
 import jakarta.validation.constraints.Min;

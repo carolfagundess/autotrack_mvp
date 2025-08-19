@@ -2,11 +2,7 @@
 package com.carolina.app.autotrack.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-
-import java.io.Serializable;
 
 
 /**
@@ -24,16 +20,10 @@ public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)        
     Long id;
-
-    @NotNull
-    @NotBlank
     @Column(length = 200, nullable = false)
     String brand;
-    @NotNull
-    @NotBlank
     @Column(length = 20, nullable = false)
     String model;
-    @Positive(message = "O valor deve ser positivo")
-    @Min(value = 1950, message = "O ano mínimo é 1950")
     Integer year;
+
 }

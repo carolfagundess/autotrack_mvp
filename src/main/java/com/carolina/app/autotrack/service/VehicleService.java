@@ -3,6 +3,7 @@ package com.carolina.app.autotrack.service;
 
 import com.carolina.app.autotrack.model.Vehicle;
 import com.carolina.app.autotrack.repository.VehicleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,38 +16,36 @@ import java.util.List;
 @Service
 public class VehicleService {
 
-    private VehicleRepository vehicleRepository;
+    private final VehicleRepository vehicleRepository;
 
-    @Autowired
-    public void setVehicleRepository(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
-    }
+    public VehicleService(VehicleRepository vehicleRepository) { this.vehicleRepository = vehicleRepository;}
 
     public List<Vehicle> getAllVehicles() {
         return vehicleRepository.findAll();
     }
 
     public Vehicle getVehicleById(Long id){
-        return vehicleRepository.findById(id).orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+        return vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado"));
     }
 
     public Vehicle saveVehicle(Vehicle vehicle){
         return vehicleRepository.save(vehicle);
     }
 
-    public Vehicle updateVehicle(Long id, Vehicle vehicle){
-        Vehicle vehicleSaved = getVehicleById(id);
-        Vehicle vehicleNew = Vehicle.builder()
-                .id(vehicleSaved.getId())
-                .brand(vehicle.getBrand() != null ? vehicle.getBrand() : vehicleSaved.getBrand())
-                .year(vehicle.getYear() != null ? vehicle.getYear() : vehicleSaved.getYear())
-                .build();
-        return vehicleRepository.saveAndFlush(vehicleNew);
+    public Vehicle updateVehicle(Long id, Vehicle vehicleRequest){
+        Vehicle vehicleToUpdate = getVehicleById(id);
+
+        vehicleToUpdate.setBrand(vehicleRequest.getBrand());
+        vehicleToUpdate.setModel(vehicleRequest.getModel());
+        vehicleToUpdate.setYear(vehicleRequest.getYear());
+
+        return vehicleRepository.save(vehicleToUpdate);
     }
 
     public void deleteVehicle(Long id){
-        if(vehicleRepository.existsById(id)){
-            vehicleRepository.deleteById(id);
+        if(!vehicleRepository.existsById(id)){
+            throw new EntityNotFoundException("Veículo não encontrado");
         }
+        vehicleRepository.deleteById(id);
     }
 }
