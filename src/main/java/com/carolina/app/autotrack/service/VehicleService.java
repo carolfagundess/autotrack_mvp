@@ -1,10 +1,9 @@
-
 package com.carolina.app.autotrack.service;
 
 import com.carolina.app.autotrack.model.Vehicle;
 import com.carolina.app.autotrack.repository.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,22 +17,24 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
 
-    public VehicleService(VehicleRepository vehicleRepository) { this.vehicleRepository = vehicleRepository;}
+    public VehicleService(VehicleRepository vehicleRepository) {
+        this.vehicleRepository = vehicleRepository;
+    }
 
-    public List<Vehicle> getAllVehicles() {
+    public List<Vehicle> getAll() {
         return vehicleRepository.findAll();
     }
 
-    public Vehicle getVehicleById(Long id){
+    public Vehicle getById(Long id) {
         return vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado"));
     }
 
-    public Vehicle saveVehicle(Vehicle vehicle){
+    public Vehicle save(Vehicle vehicle) {
         return vehicleRepository.save(vehicle);
     }
 
-    public Vehicle updateVehicle(Long id, Vehicle vehicleRequest){
-        Vehicle vehicleToUpdate = getVehicleById(id);
+    public Vehicle update(Long id, Vehicle vehicleRequest) {
+        Vehicle vehicleToUpdate = getById(id);
 
         vehicleToUpdate.setBrand(vehicleRequest.getBrand());
         vehicleToUpdate.setModel(vehicleRequest.getModel());
@@ -42,8 +43,12 @@ public class VehicleService {
         return vehicleRepository.save(vehicleToUpdate);
     }
 
-    public void deleteVehicle(Long id){
-        if(!vehicleRepository.existsById(id)){
+    public Vehicle patch(Long id, @Valid Vehicle vehicle) {
+        return null;
+    }
+
+    public void delete(Long id) {
+        if (!vehicleRepository.existsById(id)) {
             throw new EntityNotFoundException("Veículo não encontrado");
         }
         vehicleRepository.deleteById(id);
