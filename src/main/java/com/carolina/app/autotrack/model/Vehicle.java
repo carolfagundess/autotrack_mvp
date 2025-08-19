@@ -2,7 +2,10 @@
 package com.carolina.app.autotrack.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 
 /**
@@ -24,6 +27,9 @@ public class Vehicle {
     String brand;
     @Column(length = 20, nullable = false)
     String model;
+    @Column(nullable = false) @Max(2100)
     Integer year;
+    @Column(precision = 6, scale = 0,  nullable = false, name = "kmRodados")
+    Long mileage;
 
 }
