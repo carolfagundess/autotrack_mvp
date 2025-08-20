@@ -32,7 +32,6 @@ public class FuelRecord {
     LocalDate date;
     @NotNull(message = "A leitura do odômetro não pode ser nula")
     @PositiveOrZero(message = "O odômetro não pode ser negativo")
-    @Column(precision = 6, nullable = false)
     Long odometerReading;
     @DecimalMax(value = "3500.00", message = "O número não pode exceder 3500.00")
     @DecimalMin(value = "0.01", message = "O número deve ser maior que 0.01")

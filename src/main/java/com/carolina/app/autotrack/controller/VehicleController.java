@@ -1,9 +1,9 @@
 package com.carolina.app.autotrack.controller;
 
-import com.carolina.app.autotrack.dto.VehiclePatchRequest;
+import com.carolina.app.autotrack.dto.vehicle.VehiclePatchRequest;
 import com.carolina.app.autotrack.model.Vehicle;
-import com.carolina.app.autotrack.dto.VehicleRequest;
-import com.carolina.app.autotrack.dto.VehicleResponse;
+import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
+import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
 import com.carolina.app.autotrack.service.VehicleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
