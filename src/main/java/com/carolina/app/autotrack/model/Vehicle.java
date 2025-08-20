@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,7 +30,7 @@ public class Vehicle {
     String model;
     @Column(nullable = false) @Max(2100)
     Integer year;
-    @Column(precision = 6, scale = 0,  nullable = false, name = "kmRodados")
-    Long mileage;
 
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FuelRecord> fuelRecords = new ArrayList<FuelRecord>();
 }

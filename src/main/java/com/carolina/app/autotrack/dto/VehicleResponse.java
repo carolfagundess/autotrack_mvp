@@ -7,10 +7,9 @@ import jakarta.validation.constraints.*;
 public record VehicleResponse(@JsonProperty("_id") Long id,
                               String brand,
                               String model,
-                              Integer year,
-                              Long mileage) {
+                              Integer year){
 
     public VehicleResponse(Vehicle vehicle) {
-        this(vehicle.getId(), vehicle.getBrand(), vehicle.getModel(), vehicle.getYear(), vehicle.getMileage());
+        this(vehicle.getId(), vehicle.getBrand(), vehicle.getModel(), vehicle.getYear());
     }
 }
