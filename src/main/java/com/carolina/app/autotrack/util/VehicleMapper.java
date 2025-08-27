@@ -10,12 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class VehicleMapper {
 
-    private final FuelRecordMapper fuelRecordMapper;
-
-    public VehicleMapper(FuelRecordMapper fuelRecordMapper) {
-        this.fuelRecordMapper = fuelRecordMapper;
-    }
-
     public Vehicle toEntity(VehicleRequest vehicleRequest){
         Vehicle vehicle = new Vehicle();
         vehicle.setBrand(vehicleRequest.brand());
@@ -25,19 +19,16 @@ public class VehicleMapper {
     }
 
     public VehicleResponse toResponse(Vehicle vehicle){
-        //usa o metodo do fuel record mapper para converter a lista de fuelrecords em fuelrecords summarys
-        var fuelRecordsSummary = fuelRecordMapper.toSummaryResponseList(vehicle.getFuelRecords());
-
         return new VehicleResponse(
                 vehicle.getId(),
                 vehicle.getBrand(),
                 vehicle.getModel(),
                 vehicle.getYear(),
-                fuelRecordsSummary // A lista de DTOs resumidos
+                null // A lista de DTOs resumidos
         );
     }
 
-    public static VehicleSummaryResponse toSummaryResponse(Vehicle vehicle){
+    public VehicleSummaryResponse toSummaryResponse(Vehicle vehicle){
         return new VehicleSummaryResponse(
                 vehicle.getId(),
                 vehicle.getBrand(),
@@ -56,4 +47,5 @@ public class VehicleMapper {
             vehicleToUpdate.setYear(request.year());
         }
     }
+
 }

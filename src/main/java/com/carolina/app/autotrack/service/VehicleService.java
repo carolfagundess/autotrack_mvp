@@ -1,14 +1,17 @@
 package com.carolina.app.autotrack.service;
 
+import com.carolina.app.autotrack.dto.vehicle.VehiclePatchRequest;
+import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
+import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
 import com.carolina.app.autotrack.model.Vehicle;
 import com.carolina.app.autotrack.repository.VehicleRepository;
+import com.carolina.app.autotrack.util.VehicleMapper;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -19,45 +22,73 @@ import java.util.Optional;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
 
-    public Vehicle save(Vehicle vehicle) {
-        return vehicleRepository.save(vehicle);
+    //AJUSTADO
+    public VehicleResponse save(VehicleRequest request) {
+        Vehicle vehicle = vehicleMapper.toEntity(request);
+        Vehicle vehicleSaved = vehicleRepository.save(vehicle);
+        return vehicleMapper.toResponse(vehicleSaved);
     }
 
-    public List<Vehicle> getAll() {
-        return vehicleRepository.findAll();
+    //AJUSTADO
+    public List<VehicleResponse> getAll() {
+        List<Vehicle> listVehicles = vehicleRepository.findAll();
+        // Mapeia a lista de entidades para uma lista de DTOs de resposta
+        return listVehicles.stream()
+                .map(vehicleMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public Vehicle getById(Long id) {
-        return vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado"));
+    //AJUSTADO - usado no fuelrecord **validar
+    public VehicleResponse getById(Long id) {
+        Vehicle foundVehicle = getVehicleOrThrow(id);
+        return vehicleMapper.toResponse(foundVehicle);
     }
 
-    public Vehicle update(Long id, Vehicle vehicleRequest) {
-        Vehicle vehicleToUpdate = getById(id);
+    //AJUSTADO
+    public VehicleResponse update(Long id, VehicleRequest request) {
+        Vehicle vehicleToUpdate = getVehicleOrThrow(id);
 
+        Vehicle vehicleRequest = vehicleMapper.toEntity(request);
         vehicleToUpdate.setBrand(vehicleRequest.getBrand());
         vehicleToUpdate.setModel(vehicleRequest.getModel());
         vehicleToUpdate.setYear(vehicleRequest.getYear());
 
-        return vehicleRepository.save(vehicleToUpdate);
+        return vehicleMapper.toResponse(vehicleRepository.save(vehicleToUpdate));
     }
 
-    public Vehicle patch(Long id, Vehicle vehicleRequest) {
-        Vehicle vehicleToUpdate = getById(id);
-        vehicleToUpdate.setBrand(updateNotNull(vehicleRequest.getBrand(), vehicleToUpdate.getBrand()));
-        vehicleToUpdate.setModel(updateNotNull(vehicleRequest.getModel(), vehicleToUpdate.getModel()));
-        vehicleToUpdate.setYear(updateNotNull(vehicleRequest.getYear(), vehicleToUpdate.getYear()));
-        return vehicleRepository.save(vehicleToUpdate);
+    //AJUSTADO //recupera o objeto e envia para o metodo do mapper
+    public VehicleResponse patch(Long id, VehiclePatchRequest vehiclePatchRequest) {
+        Vehicle vehicleToUpdate = getVehicleOrThrow(id);
+        vehicleMapper.patchEntity(vehiclePatchRequest, vehicleToUpdate);
+        Vehicle updatedVehicle = vehicleRepository.saveAndFlush(vehicleToUpdate);
+        return vehicleMapper.toResponse(updatedVehicle);
     }
+
 
     public void delete(Long id) {
         if (!vehicleRepository.existsById(id)) {
-            throw new EntityNotFoundException("Veículo não encontrado");
+            throw new EntityNotFoundException("Vehicle not found with id: " + id);
         }
         vehicleRepository.deleteById(id);
     }
 
-    private <T> T updateNotNull(T valorNovo, T valorAtual) {
-        return Optional.ofNullable(valorNovo).orElse(valorAtual);
+    /**
+     * Método auxiliar interno para buscar um veículo ou lançar exceção
+     *
+     * @param id O ID do veículo a ser buscado.
+     * @throws EntityNotFoundException Se o veículo não for encontrado.
+     */
+    private Vehicle getVehicleOrThrow(Long id) {
+        return vehicleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + id));
+    }
+
+    /**
+     * Método auxiliar externo para buscar um veiculo, uso em services externos
+     */
+    public Vehicle getVehicleEntityById(Long id) {
+        return getVehicleOrThrow(id);
     }
 }

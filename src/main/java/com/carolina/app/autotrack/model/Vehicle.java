@@ -31,6 +31,7 @@ public class Vehicle {
     @Column(nullable = false) @Max(2100)
     Integer year;
 
+    @Builder.Default
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FuelRecord> fuelRecords = new ArrayList<FuelRecord>();
 }

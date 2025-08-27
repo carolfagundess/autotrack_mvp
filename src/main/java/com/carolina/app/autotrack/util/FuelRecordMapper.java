@@ -1,8 +1,10 @@
 package com.carolina.app.autotrack.util;
 
+import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordPatchRequest;
 import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordRequest;
 import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordResponse;
 import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordSummaryResponse;
+import com.carolina.app.autotrack.dto.vehicle.VehicleSummaryResponse;
 import com.carolina.app.autotrack.model.FuelRecord;
 import com.carolina.app.autotrack.model.Vehicle;
 import org.springframework.stereotype.Component;
@@ -24,14 +26,13 @@ public class FuelRecordMapper {
         return fuelRecord;
     }
 
-    public FuelRecordResponse toResponse(FuelRecord fuelRecord) {
+    public FuelRecordResponse toResponse(FuelRecord fuelRecord, VehicleSummaryResponse vehicleSummaryResponse) {
         return new FuelRecordResponse(fuelRecord.getId(),
                 fuelRecord.getDate(),
                 fuelRecord.getOdometerReading(),
                 fuelRecord.getLiters(),
                 fuelRecord.getPricePerLiter(),
-                //usa o metodo do vehicle mapper para gerar um resumo do veiculo associado ao fuelrecord
-                VehicleMapper.toSummaryResponse(fuelRecord.getVehicle()));
+                vehicleSummaryResponse); //o summary será responsabilidade do service
     }
 
     //cria um FuelRecord Resumido
@@ -46,4 +47,20 @@ public class FuelRecordMapper {
         }
         return fuelRecords.stream().map(this::toSummaryResponse).collect(Collectors.toList());
     }
+
+    public void patchEntity(FuelRecordPatchRequest fuelRecordRequest, FuelRecord fuelRecord) {
+        if (fuelRecordRequest.date() != null) {
+            fuelRecord.setDate(fuelRecordRequest.date());
+        }
+        if (fuelRecordRequest.odometerReading() != null) {
+            fuelRecord.setOdometerReading(fuelRecordRequest.odometerReading());
+        }
+        if (fuelRecordRequest.liters() != null) {
+            fuelRecord.setLiters(fuelRecordRequest.liters());
+        }
+        if (fuelRecordRequest.pricePerLiter() != null) {
+            fuelRecord.setPricePerLiter(fuelRecordRequest.pricePerLiter());
+        }
+    }
+
 }
