@@ -23,7 +23,7 @@ public class FuelRecordService {
     private final FuelRecordRepository fuelRecordRepository;
     private final VehicleService vehicleService;
     private final FuelRecordMapper fuelRecordMapper;
-    private final VehicleMapper vehicleMapper; // Injetamos o VehicleMapper aqui
+    private final VehicleMapper vehicleMapper;
 
 
 
@@ -88,7 +88,7 @@ public class FuelRecordService {
     }
 
 
-    /* Método auxiliar interno para buscar um fuelrecord ou retornar nulo */
+    /**Método auxiliar interno para buscar um fuelrecord ou retornar nulo**/
     private FuelRecord getFuelRecordOrThrowNotFound(Long id) {
         return fuelRecordRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Fuel record not found with id: " + id));

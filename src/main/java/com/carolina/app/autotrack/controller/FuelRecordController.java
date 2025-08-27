@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.List;
 
 @Controller
-@RequestMapping("/fuelrecord")
+@RequestMapping("/fuelrecords")
 @Validated
 public class FuelRecordController {
 
