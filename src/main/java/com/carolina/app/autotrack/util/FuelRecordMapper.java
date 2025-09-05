@@ -7,12 +7,14 @@ import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordSummaryResponse;
 import com.carolina.app.autotrack.dto.vehicle.VehicleSummaryResponse;
 import com.carolina.app.autotrack.model.FuelRecord;
 import com.carolina.app.autotrack.model.Vehicle;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class FuelRecordMapper {
 
     public FuelRecord toEntity(FuelRecordRequest fuelRecordRequest, Vehicle vehicle) {
@@ -27,12 +29,16 @@ public class FuelRecordMapper {
     }
 
     public FuelRecordResponse toResponse(FuelRecord fuelRecord, VehicleSummaryResponse vehicleSummaryResponse) {
-        return new FuelRecordResponse(fuelRecord.getId(),
+        Vehicle vehicle = fuelRecord.getVehicle();
+        // Retorna o DTO de resposta completo
+        return new FuelRecordResponse(
+                fuelRecord.getId(),
                 fuelRecord.getDate(),
                 fuelRecord.getOdometerReading(),
                 fuelRecord.getLiters(),
                 fuelRecord.getPricePerLiter(),
-                vehicleSummaryResponse); //o summary será responsabilidade do service
+                vehicleSummaryResponse
+        );
     }
 
     //cria um FuelRecord Resumido

@@ -1,9 +1,9 @@
 package com.carolina.app.autotrack.controller;
 
+import com.carolina.app.autotrack.dto.vehicle.VehicleDetailsResponse;
 import com.carolina.app.autotrack.dto.vehicle.VehiclePatchRequest;
 import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
 import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
-import com.carolina.app.autotrack.model.Vehicle;
 import com.carolina.app.autotrack.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +45,12 @@ public class VehicleController {
     public ResponseEntity<VehicleResponse> getVehicleById(@PathVariable Long id) {
         VehicleResponse response = vehicleService.getById(id);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<VehicleDetailsResponse> getVehicleDetails(@PathVariable Long id) {
+        VehicleDetailsResponse response = vehicleService.getVehicleDetails(id);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")

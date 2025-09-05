@@ -47,8 +47,4 @@ public class FuelRecord {
     @JoinColumn(name = "vehicle_id") //chave estrangeira na tabela
     private Vehicle vehicle;
 
-    //sera calculado pelo service
-    //Double kmPeLiter;
-    //sera calculado pelo service
-    //Double costPerKm;
 }

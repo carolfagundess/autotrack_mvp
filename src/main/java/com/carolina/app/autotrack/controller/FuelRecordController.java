@@ -7,7 +7,6 @@ import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordResponse;
 import com.carolina.app.autotrack.service.FuelRecordService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/fuelrecords")
 @Validated
 public class FuelRecordController {

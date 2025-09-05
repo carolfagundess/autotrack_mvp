@@ -5,9 +5,11 @@ import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
 import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
 import com.carolina.app.autotrack.dto.vehicle.VehicleSummaryResponse;
 import com.carolina.app.autotrack.model.Vehicle;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class VehicleMapper {
 
     public Vehicle toEntity(VehicleRequest vehicleRequest){
@@ -23,10 +25,10 @@ public class VehicleMapper {
                 vehicle.getId(),
                 vehicle.getBrand(),
                 vehicle.getModel(),
-                vehicle.getYear(),
-                null // A lista de DTOs resumidos
+                vehicle.getYear()
         );
     }
+
 
     public VehicleSummaryResponse toSummaryResponse(Vehicle vehicle){
         return new VehicleSummaryResponse(

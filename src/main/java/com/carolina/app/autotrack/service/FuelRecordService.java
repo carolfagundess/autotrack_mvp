@@ -11,6 +11,7 @@ import com.carolina.app.autotrack.util.VehicleMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,16 +26,16 @@ public class FuelRecordService {
     private final FuelRecordMapper fuelRecordMapper;
     private final VehicleMapper vehicleMapper;
 
-
-
+    @Transactional
     public FuelRecordResponse save(FuelRecordRequest fuelRecordRequest) {
         Vehicle foundVehicle = vehicleService.getVehicleEntityById(fuelRecordRequest.vehicleId());
         FuelRecord fuelRecordToSave = fuelRecordMapper.toEntity(fuelRecordRequest, foundVehicle);
         FuelRecord fuelRecord = fuelRecordRepository.save(fuelRecordToSave);
-        return fuelRecordMapper.toResponse(fuelRecord, vehicleMapper.toSummaryResponse(fuelRecord.getVehicle()));
+        return fuelRecordMapper.toResponse(fuelRecord, vehicleMapper.toSummaryResponse(foundVehicle));
     }
 
     //AJUSTADO
+    @Transactional(readOnly = true)
     public List<FuelRecordResponse> getAll() {
         // 1. Encontra todas as entidades FuelRecord
         List<FuelRecord> listFuelRecords = fuelRecordRepository.findAll();
@@ -52,6 +53,7 @@ public class FuelRecordService {
     }
 
     //AJUSTADO
+    @Transactional(readOnly = true)
     public FuelRecordResponse getById(Long id) {
         FuelRecord fuelRecord = getFuelRecordOrThrowNotFound(id);
         Vehicle vehicle = fuelRecord.getVehicle();
@@ -59,6 +61,8 @@ public class FuelRecordService {
         return fuelRecordMapper.toResponse(fuelRecord, vehicleMapper.toSummaryResponse(vehicle));
     }
 
+
+    @Transactional
     public FuelRecordResponse update(Long id, FuelRecordRequest fuelRecordRequest) {
         FuelRecord fuelRecordToUpdated =  getFuelRecordOrThrowNotFound(id);
 
@@ -73,13 +77,15 @@ public class FuelRecordService {
         return fuelRecordMapper.toResponse(fuelRecordRepository.saveAndFlush(fuelRecordToUpdated), vehicleMapper.toSummaryResponse(fuelRecordToUpdated.getVehicle()));
     }
 
+    @Transactional
     public FuelRecordResponse patch(Long id, FuelRecordPatchRequest request) {
         FuelRecord fuelRecord = getFuelRecordOrThrowNotFound(id);
         fuelRecordMapper.patchEntity(request, fuelRecord);
         FuelRecord updatedFuelRecord = fuelRecordRepository.saveAndFlush(fuelRecord);
-        return fuelRecordMapper.toResponse(updatedFuelRecord,  vehicleMapper.toSummaryResponse(fuelRecord.getVehicle()));
+        return fuelRecordMapper.toResponse(updatedFuelRecord, vehicleMapper.toSummaryResponse(fuelRecord.getVehicle()));
     }
 
+    @Transactional
     public void deleteById(Long id){
         if (!fuelRecordRepository.existsById(id)){
             throw new EntityNotFoundException("FuelRecord not found with id: " + id);
