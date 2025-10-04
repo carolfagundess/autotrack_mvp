@@ -13,7 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,10 +34,13 @@ public class FuelRecordService {
         Vehicle foundVehicle = vehicleService.getVehicleEntityById(fuelRecordRequest.vehicleId());
         FuelRecord fuelRecordToSave = fuelRecordMapper.toEntity(fuelRecordRequest, foundVehicle);
         FuelRecord fuelRecord = fuelRecordRepository.save(fuelRecordToSave);
+
+        if (fuelRecordRequest.fullTank() == true) {
+            calculateConsumptionFor(fuelRecord);
+        }
         return fuelRecordMapper.toResponse(fuelRecord, vehicleMapper.toSummaryResponse(foundVehicle));
     }
 
-    //AJUSTADO
     @Transactional(readOnly = true)
     public List<FuelRecordResponse> getAll() {
         // 1. Encontra todas as entidades FuelRecord
@@ -52,7 +58,6 @@ public class FuelRecordService {
                 .collect(Collectors.toList());
     }
 
-    //AJUSTADO
     @Transactional(readOnly = true)
     public FuelRecordResponse getById(Long id) {
         FuelRecord fuelRecord = getFuelRecordOrThrowNotFound(id);
@@ -60,7 +65,6 @@ public class FuelRecordService {
         //ENVIANDO UM SUMMARY RESPONSE VEHICLE
         return fuelRecordMapper.toResponse(fuelRecord, vehicleMapper.toSummaryResponse(vehicle));
     }
-
 
     @Transactional
     public FuelRecordResponse update(Long id, FuelRecordRequest fuelRecordRequest) {
@@ -89,6 +93,24 @@ public class FuelRecordService {
         fuelRecordRepository.deleteById(id);
     }
 
+    private void calculateConsumptionFor(FuelRecord fuelRecord) {
+        Optional<FuelRecord> fuelRecordFound = fuelRecordRepository.findTopByVehicleAndFullTankIsTrueAndDateBeforeOrderByDateDesc(fuelRecord.getVehicle(), fuelRecord.getDate());
+
+        //calcular o consumo entre dois tanques cheios
+        if (fuelRecordFound.isPresent()) {
+            FuelRecord previousFuelRecord = fuelRecordFound.get();
+
+            BigDecimal distance = BigDecimal.valueOf(fuelRecord.getOdometerReading())
+                    .subtract(BigDecimal.valueOf(previousFuelRecord.getOdometerReading()));
+
+            if (distance.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal consumption = distance.divide(fuelRecord.getLiters(), 2, RoundingMode.HALF_UP);
+                fuelRecord.setConsumptionKmL(consumption);
+                BigDecimal cost = fuelRecord.getLiters().multiply(fuelRecord.getPricePerLiter()).divide(distance, 2, RoundingMode.HALF_UP);
+                fuelRecord.setCostPerKm(cost);
+            }
+        }
+    }
 
     /**Método auxiliar interno para buscar um fuelrecord ou retornar nulo**/
     private FuelRecord getFuelRecordOrThrowNotFound(Long id) {
