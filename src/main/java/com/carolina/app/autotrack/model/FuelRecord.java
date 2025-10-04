@@ -41,6 +41,7 @@ public class FuelRecord {
     @DecimalMin(value = "0.01", message = "O número deve ser maior que 0.01")
     @Column(precision = 4, scale = 2, nullable = false)
     BigDecimal pricePerLiter;
+    Boolean fullTank;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

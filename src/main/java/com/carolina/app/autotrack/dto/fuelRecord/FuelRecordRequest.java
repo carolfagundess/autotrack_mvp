@@ -21,6 +21,7 @@ public record FuelRecordRequest(Long id,
                                 @DecimalMax(value = "99.99", message = "O número não pode exceder 99.99")
                                 @DecimalMin(value = "0.01", message = "O número deve ser maior que 0.01")
                                 BigDecimal pricePerLiter,
+                                Boolean fullTank,
                                 //precisa ter este id salvo para criar um novo fuelrecord
                                 @NotNull(message = "O ID do veículo é obrigatório")
                                 Long vehicleId) {

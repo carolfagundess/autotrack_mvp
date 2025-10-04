@@ -1,9 +1,6 @@
 package com.carolina.app.autotrack.controller;
 
-import com.carolina.app.autotrack.dto.vehicle.VehicleDetailsResponse;
-import com.carolina.app.autotrack.dto.vehicle.VehiclePatchRequest;
-import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
-import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
+import com.carolina.app.autotrack.dto.vehicle.*;
 import com.carolina.app.autotrack.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +66,12 @@ public class VehicleController {
     public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
         vehicleService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<GeneralStatsDTO> getVehiclePerfomance(@PathVariable Long id) {
+        GeneralStatsDTO response = vehicleService.calculateVehiclePerformance(id);
+        return ResponseEntity.ok().body(response);
     }
 }
 

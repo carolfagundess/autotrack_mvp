@@ -67,11 +67,7 @@ public class FuelRecordService {
         FuelRecord fuelRecordToUpdated =  getFuelRecordOrThrowNotFound(id);
 
         Vehicle foundVehicle = vehicleService.getVehicleEntityById(fuelRecordRequest.vehicleId());
-
-        fuelRecordToUpdated.setDate(fuelRecordRequest.date());
-        fuelRecordToUpdated.setOdometerReading(fuelRecordRequest.odometerReading());
-        fuelRecordToUpdated.setLiters(fuelRecordRequest.liters());
-        fuelRecordToUpdated.setPricePerLiter(fuelRecordRequest.pricePerLiter());
+        fuelRecordMapper.updateEntity(fuelRecordRequest, fuelRecordToUpdated);
         fuelRecordToUpdated.setVehicle(foundVehicle);
 
         return fuelRecordMapper.toResponse(fuelRecordRepository.saveAndFlush(fuelRecordToUpdated), vehicleMapper.toSummaryResponse(fuelRecordToUpdated.getVehicle()));

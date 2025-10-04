@@ -54,6 +54,13 @@ public class FuelRecordMapper {
         return fuelRecords.stream().map(this::toSummaryResponse).collect(Collectors.toList());
     }
 
+    public void updateEntity(FuelRecordRequest fuelRecordRequest, FuelRecord fuelRecord) {
+        fuelRecord.setDate(fuelRecordRequest.date());
+        fuelRecord.setOdometerReading(fuelRecordRequest.odometerReading());
+        fuelRecord.setLiters(fuelRecordRequest.liters());
+        fuelRecord.setPricePerLiter(fuelRecordRequest.pricePerLiter());
+    }
+
     public void patchEntity(FuelRecordPatchRequest fuelRecordRequest, FuelRecord fuelRecord) {
         if (fuelRecordRequest.date() != null) {
             fuelRecord.setDate(fuelRecordRequest.date());

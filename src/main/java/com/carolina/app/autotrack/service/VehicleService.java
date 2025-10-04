@@ -1,10 +1,8 @@
 package com.carolina.app.autotrack.service;
 
 import com.carolina.app.autotrack.dto.fuelRecord.FuelRecordSummaryResponse;
-import com.carolina.app.autotrack.dto.vehicle.VehicleDetailsResponse;
-import com.carolina.app.autotrack.dto.vehicle.VehiclePatchRequest;
-import com.carolina.app.autotrack.dto.vehicle.VehicleRequest;
-import com.carolina.app.autotrack.dto.vehicle.VehicleResponse;
+import com.carolina.app.autotrack.dto.vehicle.*;
+import com.carolina.app.autotrack.model.FuelRecord;
 import com.carolina.app.autotrack.model.Vehicle;
 import com.carolina.app.autotrack.repository.VehicleRepository;
 import com.carolina.app.autotrack.util.FuelRecordMapper;
@@ -99,6 +97,15 @@ public class VehicleService {
             throw new EntityNotFoundException("Vehicle not found with id: " + id);
         }
         vehicleRepository.deleteById(id);
+    }
+
+    // TO DO
+    public GeneralStatsDTO calculateVehiclePerformance(Long id) {
+        Vehicle vehicle = getVehicleOrThrow(id);
+        List<FuelRecord> fuelRecords = vehicle.getFuelRecords();
+
+
+        return null;
     }
 
     /**

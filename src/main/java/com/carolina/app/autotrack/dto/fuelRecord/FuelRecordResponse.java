@@ -10,6 +10,7 @@ public record FuelRecordResponse(Long id,
                                  Long odometerReading,
                                  BigDecimal liters,
                                  BigDecimal pricePerLiter,
+                                 Boolean fullTank,
                                  //DTO resumido para expor o carro em questão
                                  VehicleSummaryResponse vehicleResponse) {
 
