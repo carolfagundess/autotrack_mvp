@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,8 +107,40 @@ public class VehicleService {
         Vehicle vehicle = getVehicleOrThrow(id);
         List<FuelRecord> fuelRecords = vehicle.getFuelRecords();
 
+        //calculando o total de litros usados
+        BigDecimal totalLiters = fuelRecords.stream()
+                .map(FuelRecord::getLiters)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return null;
+        //calculando o custo com base nos litros multiplicados pelo preco da gasolina no dia
+        BigDecimal totalCost = fuelRecords.stream()
+                .map(fuelRecord -> fuelRecord.getLiters().multiply(fuelRecord.getPricePerLiter()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        fuelRecords.sort(Comparator.comparing(FuelRecord::getDate));
+
+        //calculando a distancia
+        BigDecimal totalDistance = BigDecimal.valueOf(fuelRecords.getLast().getOdometerReading())
+                .subtract(BigDecimal.valueOf(fuelRecords.getFirst().getOdometerReading()));
+
+        BigDecimal averageFuelConsumption = (totalLiters.compareTo(BigDecimal.ZERO) > 0)
+                ? totalDistance.divide(totalLiters, 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        BigDecimal averageCostPerKm = (totalDistance.compareTo(BigDecimal.ZERO) > 0)
+                ? totalCost.divide(totalDistance, 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO; //
+        return new GeneralStatsDTO(
+                vehicle.getId(),
+                vehicle.getBrand(),
+                vehicle.getModel(),
+                vehicle.getYear(),
+                averageFuelConsumption,
+                averageCostPerKm,
+                totalDistance,
+                totalCost,
+                totalLiters
+        );
     }
 
     /**
